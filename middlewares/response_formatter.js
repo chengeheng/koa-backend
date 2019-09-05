@@ -7,17 +7,13 @@ var response_formatter = async (ctx, next) => {
 
     //如果有返回数据，将返回数据添加到data中
     if (ctx.body) {
+        const { message = "success", code = 0, ...rest } = ctx.body;
         ctx.body = {
-            code: 0,
-            message: 'success',
-            data: ctx.body
-        }
-    } else {
-        ctx.body = {
-            code: 0,
-            message: 'success'
-        }
+            code: code,
+            message: message,
+            data: { ...rest }
+        };
     }
-}
+};
 
 module.exports = response_formatter;
