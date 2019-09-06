@@ -45,17 +45,46 @@ router.post("/remove", async ctx => {
         };
         return;
     }
-    let data = await users.find({ _id: id });
-    if (data.length < 1) {
+    let data = await users.findOneAndDelete({ _id: id });
+    if (data) {
+        ctx.body = {
+            message: "删除成功"
+        };
+    } else {
         ctx.response.status = 400;
         ctx.body = {
             code: 400,
-            message: "删除失败，id不存在"
+            message: "删除失败"
+        };
+    }
+});
+
+router.post("/update", async ctx => {
+    const { id = "", ...rest } = ctx.request.body;
+    if (!id) {
+        ctx.body = {
+            code: 400,
+            message: "id不能为空"
+        };
+        return;
+    }
+    let data = await users.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                ...rest
+            }
+        }
+    );
+    if (data) {
+        ctx.body = {
+            message: "更新成功"
         };
     } else {
-        users.remove({ _id: id });
+        ctx.response.status = 400;
         ctx.body = {
-            message: "删除成功"
+            code: 400,
+            message: "更新失败"
         };
     }
 });
