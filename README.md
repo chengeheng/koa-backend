@@ -1,2 +1,5 @@
 # koa-backend
-koa创建发服务器后台
+
+koa 创建服务器后台
+
+1. 数据库：mongodb
