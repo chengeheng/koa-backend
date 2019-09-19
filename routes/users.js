@@ -1,40 +1,51 @@
 const router = require("koa-router")();
 const Monk = require("monk");
-const db = new Monk("localhost/study"); //链接到库
+
+// const db = require('monk')('user:pass@localhost:port/mydb')
 const users = db.get("users"); //表
 // 前缀
 router.prefix("/users");
 
-router.get("/", function(ctx, next) {
-	ctx.body = "this is a users response!";
-});
-
-router.get("/bar", function(ctx, next) {
-	console.log(ctx.query);
-	ctx.body = "this is a users/bar response";
-});
-
 // 获取数据接口
 router.get("/loadData", async (ctx, next) => {
-	const { name = "", age = "" } = ctx.query;
+	const { name = "" } = ctx.query;
 	let data = await users.find({
-		name: { $regex: name },
-		age: { $regex: age }
+		userName: { $regex: name }
 	});
 	ctx.response.type = "application/json";
 	ctx.body = data || [];
 });
+
+// 增加数据接口
+router.post("/login", async (ctx, next) => {
+	const { name = "", password = "" } = ctx.request.body;
+	let data = await users.find({
+		userName: { $regex: name }
+	});
+	if (data.length > 0 && data[0].password === password) {
+		ctx.body = {
+			message: "登录成功"
+		};
+	} else {
+		ctx.body = {
+			code: 400,
+			message: "登录失败"
+		};
+	}
+});
+
 // 增加数据接口
 router.post("/add", async (ctx, next) => {
-	const { name = "", age = "" } = ctx.request.body;
+	const { name = "", password = "" } = ctx.request.body;
 	users.insert({
-		name: name,
-		age: age
+		userName: name,
+		password: password
 	});
 	ctx.body = {
 		message: "新增成功"
 	};
 });
+
 // 删除数据接口
 router.post("/remove", async ctx => {
 	const { id = "" } = ctx.request.body;
@@ -58,6 +69,7 @@ router.post("/remove", async ctx => {
 		};
 	}
 });
+
 // 修改数据接口
 router.post("/update", async ctx => {
 	const { id = "", ...rest } = ctx.request.body;

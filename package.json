@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
+    "ejs": "^2.7.1",
+    "fs": "0.0.1-security",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-convert": "^1.2.0",
@@ -19,8 +21,10 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "koa-views": "^6.2.0",
+    "marked": "^0.7.0",
     "monk": "^7.0.0",
-    "pug": "^2.0.3"
+    "pug": "^2.0.3",
+    "showdown": "^1.9.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
