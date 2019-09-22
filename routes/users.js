@@ -1,10 +1,29 @@
 const router = require("koa-router")();
 const Monk = require("monk");
-
+// const db = new Monk("admin:123456@39.105.143.77:27017/study"); //链接到库
+const db = new Monk("localhost:27017/blog"); //链接到库
 // const db = require('monk')('user:pass@localhost:port/mydb')
 const users = db.get("users"); //表
 // 前缀
 router.prefix("/users");
+
+// 管理员验证
+router.post("/check", async (ctx, next) => {
+	const { name = "", password = "" } = ctx.request.body;
+	let data = await users.find({
+		name: name,
+		password: password
+	});
+	if (data.length > 0) {
+		ctx.body = {
+			role: data[0].role
+		};
+	} else {
+		ctx.body = {
+			role: "guest"
+		};
+	}
+});
 
 // 获取数据接口
 router.get("/loadData", async (ctx, next) => {
@@ -16,7 +35,7 @@ router.get("/loadData", async (ctx, next) => {
 	ctx.body = data || [];
 });
 
-// 增加数据接口
+// 登录验证
 router.post("/login", async (ctx, next) => {
 	const { name = "", password = "" } = ctx.request.body;
 	let data = await users.find({
