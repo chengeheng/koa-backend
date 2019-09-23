@@ -45,6 +45,7 @@ router.get("/detail/get", async (ctx, next) => {
 	if (!!name && !!type) {
 		let buffer = await readFile(`public/notes/${name}.${type}`);
 		ctx.body = { data: buffer.toString() };
+		ctx.code = 200;
 	} else {
 		ctx.code = 4001;
 		ctx.body = { data: buffer.toString() };
