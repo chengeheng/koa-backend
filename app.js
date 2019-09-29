@@ -8,10 +8,15 @@ const koaBody = require("koa-body");
 const index = require("./routes/index");
 const users = require("./routes/users");
 const notes = require("./routes/notes");
+const connectHistory = require("./middlewares/koa2-connect-history-api-fallback");
 
 // error handler
 onerror(app);
-
+app.use(
+	connectHistory({
+		verbose: true //打出转发日志
+	})
+);
 // middlewares
 
 const response_formatter = require("./middlewares/response_formatter");
