@@ -3,30 +3,26 @@ const app = new Koa();
 const views = require("koa-views");
 const json = require("koa-json");
 const onerror = require("koa-onerror");
-const logger = require("koa-logger");
+// const logger = require("koa-logger");
 const koaBody = require("koa-body");
 const index = require("./routes/index");
 const users = require("./routes/users");
 const notes = require("./routes/notes");
 const connectHistory = require("./middlewares/koa2-connect-history-api-fallback");
-
+// 1. 错误处理
 // error handler
+// onerror(app, options);
 onerror(app);
+
+// 2. 中间件加载
+// middlewares
+// 解释：app.use 加载用于处理http請求的middleware（中间件），当一个请求来的时候，会依次被这些 middlewares处理。
+
 app.use(
 	connectHistory({
-		verbose: true //打出转发日志
+		htmlAcceptHeaders: ["text/html", "application/xhtml+xml"]
 	})
 );
-// middlewares
-
-const response_formatter = require("./middlewares/response_formatter");
-
-// app.use(
-// 	bodyparser({
-// 		enableTypes: ["json", "form", "text"],
-// 		limit: "50mb"
-// 	})
-// );
 
 app.use(
 	koaBody({
@@ -40,7 +36,7 @@ app.use(
 	})
 );
 app.use(json());
-app.use(logger());
+// app.use(logger());
 app.use(require("koa-static")(__dirname + "/public"));
 
 app.use(
@@ -57,12 +53,11 @@ app.use(async (ctx, next) => {
 	console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
 });
 
+// 添加格式化处理响应结果的中间件，在添加路由之前调用
+const response_formatter = require("./middlewares/response_formatter");
+app.use(response_formatter);
 // routes
 // 加载路由中间件
-// 解释：app.use 加载用于处理http請求的middleware（中间件），当一个请求来的时候，会依次被这些 middlewares处理。
-
-// 添加格式化处理响应结果的中间件，在添加路由之前调用
-app.use(response_formatter);
 app.use(index.routes(), index.allowedMethods());
 app.use(users.routes(), users.allowedMethods());
 app.use(notes.routes(), notes.allowedMethods());

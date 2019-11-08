@@ -1,7 +1,7 @@
 const router = require("koa-router")();
 const Monk = require("monk");
-// const db = new Monk("admin:123456@39.105.143.77:27017/study"); //链接到库
-const db = new Monk("localhost:27017/blog"); //链接到库
+const db = new Monk("blogadmin:422611@122.51.190.152:27017/blog"); //链接到库
+// const db = new Monk("localhost:27017/blog"); //链接到库
 // const db = require('monk')('user:pass@localhost:port/mydb')
 const users = db.get("users"); //表
 // 前缀
