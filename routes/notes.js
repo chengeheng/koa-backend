@@ -66,7 +66,7 @@ router.post("/add", async (ctx, next) => {
 		author = ""
 	} = ctx.request.body;
 	notes.insert({
-		userName: name,
+		name: name,
 		type: type,
 		summary: summary,
 		createTime: createTime,
@@ -79,7 +79,7 @@ router.post("/add", async (ctx, next) => {
 // 上传文档接口
 router.post("/detail/add", async (ctx, next) => {
 	// 上传单个文件
-	console.log(ctx.request.files);
+	// 可能不是读的files.file，会根据前台传的字段不同而改变
 	const file = ctx.request.files.file;
 	// 创建可读流
 	const reader = fs.createReadStream(file.path);

@@ -11,7 +11,7 @@ router.prefix("/users");
 router.post("/check", async (ctx, next) => {
 	const { name = "", password = "" } = ctx.request.body;
 	let data = await users.find({
-		name: name,
+		userName: name,
 		password: password
 	});
 	if (data.length > 0) {
@@ -19,8 +19,11 @@ router.post("/check", async (ctx, next) => {
 			role: data[0].role
 		};
 	} else {
+		ctx.response.status = 401;
 		ctx.body = {
-			role: "guest"
+			role: "guest",
+			code: 401,
+			message: "用户没有权限"
 		};
 	}
 });
