@@ -29,13 +29,12 @@ let listToTree = function(list) {
 	map.sort((a, b) => b - a);
 	let res = [];
 	map.map(item => {
-		let tmp = data.filter(item2 => item2.year === item);
+		let tmp = list.filter(item2 => item2.year === item);
 		res.push({
 			year: item,
 			children: tmp
 		});
 	});
-
 	return res;
 };
 module.exports = {
@@ -45,7 +44,7 @@ module.exports = {
 	},
 	getNoteListOrderByYear: async _ => {
 		let data = await notes.find();
-		data.forEach(item => ({
+		data = data.map(item => ({
 			...item,
 			year: new Date(item.createTime).getFullYear()
 		}));
