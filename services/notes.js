@@ -75,14 +75,31 @@ module.exports = {
 		}
 	},
 	addNewNote: async params => {
-		const { name, type, summary, createTime, author } = params;
+		const { name, type, createTime, author } = params;
 		notes.insert({
 			name: name,
 			type: type,
-			summary: summary,
 			createTime: createTime,
 			author: author
 		});
+	},
+	updateNote: async params => {
+		const { name, type, summary, createTime, author, id } = params;
+		if (id.length !== 24) return null;
+		let hex = /[0-9A-Fa-f]{24}/g;
+		id = hex.test(id) ? ObjectId(id) : id;
+		users.findOneAndUpdate(
+			{ _id: id },
+			{
+				$set: {
+					name: name,
+					type: type,
+					summary: summary,
+					createTime: createTime,
+					author: author
+				}
+			}
+		);
 	},
 	uploadNoteFile: async file => {
 		// 创建可读流
@@ -93,5 +110,9 @@ module.exports = {
 		);
 		// 可读流通过管道写入可写流
 		reader.pipe(upStream);
+	},
+	deleteNoteFile: async name => {
+		// 删除本地文件
+		fs.unlinkSync("public/notes/" + name);
 	}
 };

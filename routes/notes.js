@@ -12,8 +12,12 @@ router.get("/get", NoteController.getNoteDetail);
 router.get("/detail/get", NoteController.getNoteText);
 // 新增文档相关信息
 router.post("/add", NoteController.addNewNote);
+// 修改文档相关信息
+router.post("/update", NoteController.updateNote);
 
 // 上传文档接口
 router.post("/detail/add", NoteController.uploadNoteFile);
+// 删除文档接口
+router.post("/detail/update", NoteController.updateNoteFile);
 
 module.exports = router;

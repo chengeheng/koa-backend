@@ -36,16 +36,34 @@ module.exports = {
 		const {
 			name = "",
 			type = "",
-			summary = "",
 			createTime = "",
 			author = ""
 		} = ctx.request.body;
 		let params = {
 			name,
 			type,
-			summary,
 			createTime,
 			author
+		};
+		await NoteService.addNewNote(params);
+		ctx.body = {
+			message: "新增成功"
+		};
+	},
+	updateNote: async (ctx, next) => {
+		const {
+			name = "",
+			type = "",
+			createTime = "",
+			author = "",
+			id = ""
+		} = ctx.request.body;
+		let params = {
+			name,
+			type,
+			createTime,
+			author,
+			id
 		};
 		await NoteService.getNoteText(params);
 		ctx.body = {
@@ -59,6 +77,18 @@ module.exports = {
 		await NoteService.uploadNoteFile(file);
 		ctx.body = {
 			message: "上传成功！",
+			data: {
+				name: file.name
+			}
+		};
+	},
+	updateNoteFile: async (ctx, next) => {
+		const file = ctx.request.files.file;
+		// 删除单个文件
+		await NoteService.deleteNoteFile(file.name);
+		await NoteService.uploadNoteFile(file);
+		ctx.body = {
+			message: "修改成功！",
 			data: {
 				name: file.name
 			}
