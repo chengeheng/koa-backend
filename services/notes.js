@@ -26,7 +26,7 @@ let listToTree = function(list) {
 			map.push(item.year);
 		}
 	});
-	map.sort((a, b) => b - a);
+	map.sort((a, b) => a - b);
 	let res = [];
 	map.map(item => {
 		let tmp = list.filter(item2 => item2.year === item);
@@ -105,9 +105,7 @@ module.exports = {
 		// 创建可读流
 		const reader = fs.createReadStream(file.path);
 		// 创建可写流
-		const upStream = fs.createWriteStream(
-			"public/notes/" + `/${file.name}`
-		);
+		const upStream = fs.createWriteStream("public/notes/" + `${file.name}`);
 		// 可读流通过管道写入可写流
 		reader.pipe(upStream);
 	},
