@@ -26,7 +26,7 @@ let listToTree = function(list) {
 			map.push(item.year);
 		}
 	});
-	map.sort((a, b) => a - b);
+	map.sort((a, b) => b - a);
 	let res = [];
 	map.map(item => {
 		let tmp = list.filter(item2 => item2.year === item);
@@ -34,6 +34,10 @@ let listToTree = function(list) {
 			year: item,
 			children: tmp
 		});
+	});
+	res = res.map(item => {
+		item.children.sort((a, b) => b.createTime - a.createTime);
+		return item;
 	});
 	return res;
 };
