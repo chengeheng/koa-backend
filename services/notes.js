@@ -3,13 +3,13 @@ const fs = require("fs");
 const ObjectId = require("mongodb").ObjectID;
 // 连接数据库
 const Monk = require("monk");
-const db = new Monk("blogadmin:422611@122.51.190.152:27017/blog", {
-	useUnifiedTopology: true
+const db = new Monk("blogAdmin:422611@122.51.190.152:8034/blog", {
+	useUnifiedTopology: true,
 }); //链接到库
 const notes = db.get("notes"); //表
 
 // 读取文件函数
-let readFile = function(path) {
+let readFile = function (path) {
 	return new Promise((res, rej) => {
 		fs.readFile(path, (err, content) => {
 			if (err) {
@@ -19,56 +19,56 @@ let readFile = function(path) {
 		});
 	});
 };
-let listToTree = function(list) {
+let listToTree = function (list) {
 	let map = [];
-	list.forEach(item => {
+	list.forEach((item) => {
 		if (map.indexOf(item.year) < 0) {
 			map.push(item.year);
 		}
 	});
 	map.sort((a, b) => b - a);
 	let res = [];
-	map.map(item => {
-		let tmp = list.filter(item2 => item2.year === item);
+	map.map((item) => {
+		let tmp = list.filter((item2) => item2.year === item);
 		res.push({
 			year: item,
-			children: tmp
+			children: tmp,
 		});
 	});
-	res = res.map(item => {
+	res = res.map((item) => {
 		item.children.sort((a, b) => b.createTime - a.createTime);
 		return item;
 	});
 	return res;
 };
 module.exports = {
-	getNoteList: async _ => {
+	getNoteList: async (_) => {
 		let data = await notes.find();
 		return data;
 	},
-	getNoteListOrderByYear: async _ => {
+	getNoteListOrderByYear: async (_) => {
 		let data = await notes.find();
-		data = data.map(item => ({
+		data = data.map((item) => ({
 			...item,
-			year: new Date(item.createTime).getFullYear()
+			year: new Date(item.createTime).getFullYear(),
 		}));
 		return listToTree(data);
 	},
-	getNoteDetail: async id => {
+	getNoteDetail: async (id) => {
 		if (id.length !== 24) return null;
 		let hex = /[0-9A-Fa-f]{6}/g;
 		id = hex.test(id) ? ObjectId(id) : id;
 		let data = await notes.find({
-			_id: id
+			_id: id,
 		});
 		return data[0] || {};
 	},
-	getNoteText: async id => {
+	getNoteText: async (id) => {
 		if (id.length !== 24) return null;
 		let hex = /[0-9A-Fa-f]{24}/g;
 		id = hex.test(id) ? ObjectId(id) : id;
 		let data = await notes.find({
-			_id: id
+			_id: id,
 		});
 		if (data && data[0]) {
 			let { name, type } = data[0];
@@ -78,16 +78,16 @@ module.exports = {
 			return null;
 		}
 	},
-	addNewNote: async params => {
+	addNewNote: async (params) => {
 		const { name, type, createTime, author } = params;
 		notes.insert({
 			name: name,
 			type: type,
 			createTime: createTime,
-			author: author
+			author: author,
 		});
 	},
-	updateNote: async params => {
+	updateNote: async (params) => {
 		const { name, type, summary, createTime, author, id } = params;
 		if (id.length !== 24) return null;
 		let hex = /[0-9A-Fa-f]{24}/g;
@@ -100,12 +100,12 @@ module.exports = {
 					type: type,
 					summary: summary,
 					createTime: createTime,
-					author: author
-				}
+					author: author,
+				},
 			}
 		);
 	},
-	uploadNoteFile: async file => {
+	uploadNoteFile: async (file) => {
 		// 创建可读流
 		const reader = fs.createReadStream(file.path);
 		// 创建可写流
@@ -113,8 +113,8 @@ module.exports = {
 		// 可读流通过管道写入可写流
 		reader.pipe(upStream);
 	},
-	deleteNoteFile: async name => {
+	deleteNoteFile: async (name) => {
 		// 删除本地文件
 		fs.unlinkSync("public/notes/" + name);
-	}
+	},
 };
